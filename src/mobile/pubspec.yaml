@@ -1,0 +1,22 @@
+name: youni
+description: A new Flutter project.
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^0.1.2
+  charts_flutter: any
+  uuid: any
+  rxdart: any
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mockito: any
+
+flutter:
+  uses-material-design: true
