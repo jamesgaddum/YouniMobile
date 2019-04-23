@@ -5,7 +5,7 @@ import 'package:youni/models/values/task_weight.dart';
 import 'package:youni/util/datetime_helper.dart';
 
 class TaskBloc {
-  
+
   TaskRepository _taskRepository;
   BehaviorSubject<List<Task>> _taskSubject;
   
@@ -24,10 +24,6 @@ class TaskBloc {
     return _taskRepository.getTasks();
   }
 
-  void refresh() {
-    _taskSubject.sink.add(fetchAllTasks());
-  }
-
   List<TaskWeight> getTaskWeights(List<Task> tasks) {
     var weights = List<TaskWeight>();
     tasks.forEach((task) {
@@ -36,7 +32,7 @@ class TaskBloc {
     return weights;
   }
 
-  void addTaskToWeights(task, weights) {
+  addTaskToWeights(task, weights) {
     var days = task.daysTillDue();
       for (var day = 0; day < days; day++) {
         if (weights.length == day) {
@@ -45,6 +41,10 @@ class TaskBloc {
           weights[day].weight += task.dayWeight(day);
         }
       }
+  }
+
+  refresh() {
+    _taskSubject.sink.add(fetchAllTasks());
   }
 
   dispose() {
