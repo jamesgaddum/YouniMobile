@@ -3,6 +3,8 @@ import 'package:youni/blocs/task_bloc.dart';
 import 'package:youni/models/entities/task.dart';
 import 'package:youni/widgets/task_bar_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:youni/widgets/task_line_chart.dart';
+import 'package:youni/widgets/task_list.dart';
 import 'package:youni/widgets/task_list_item.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -13,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
 
   TaskBloc _taskBloc;
+  double height = 200;
 
   @override
   void initState() {
@@ -23,12 +26,21 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
 
-    var chartBox = Expanded(
-      flex: 3,
+    var lineChartBox = Expanded(
+      flex: 6,
       child: Container(
-        padding: EdgeInsets.fromLTRB(20, 10, 10, 10),
+        width: MediaQuery.of(context).size.width,
+        child: TaskLineChart(),
+        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 40),
+      ),
+    );
+
+    var chartBox = Expanded(
+      flex: 6,
+      child: Container(
+        padding: EdgeInsets.fromLTRB(20, 0, 10, 20),
         child: StreamBuilder(
-          stream: _taskBloc.allTaskWeights,
+          stream: _taskBloc.allTasks,
           builder: (_, snapshot) {
             if (snapshot.hasData) {
               return TaskBarChart(snapshot.data);
@@ -41,19 +53,19 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     var taskList = Expanded(
-      flex: 5,
-      child: StreamBuilder(
-        stream: _taskBloc.allTasks,
-        builder: (_, snapshot) {
-          if (snapshot.hasData) {
-            return Container(
-              child: _buildTaskList(snapshot.data),
-            );
-          } else if (snapshot.hasError) {
-            return Text('An error occurred');
-          }
-          return Center(child: CircularProgressIndicator());
-        },
+      flex: 10,
+      child: Container(
+        child: StreamBuilder(
+          stream: _taskBloc.allTasks,
+          builder: (_, snapshot) {
+            if (snapshot.hasData) {
+              return  _buildTaskList(snapshot.data);
+            } else if (snapshot.hasError) {
+              return Text('An error occurred');
+            }
+            return Center(child: CircularProgressIndicator());
+          },
+        ),
       )
     );
 
@@ -62,27 +74,58 @@ class _HomeScreenState extends State<HomeScreen> {
         Expanded(
           flex: 2,
           child: Container(
-            color: Colors.amber
-          )
+            padding: EdgeInsets.only(top: 30),
+          ),
         ),
-        chartBox,
-        taskList
+        //lineChartBox,
+        //Divider(height: 1,),
+        //chartBox,
+        Divider(height: 1,),
+        taskList,
+        StreamBuilder(
+          stream: _taskBloc.allTasks,
+          builder: (_, snapshot) {
+            if (snapshot.hasData) {
+              return TaskList(snapshot.data);
+            } else {
+              return Text('An error has occured');
+            }
+          }
+        )
       ],
     );
   }
 
   _buildTaskList(List<Task> tasks) {
-    return ListView.builder(
-      itemCount: tasks.length * 2,
-      itemBuilder: (context, i) {
+    return AnimatedList(
+      padding: EdgeInsets.all(0),
+      initialItemCount: tasks.length * 2,
+      itemBuilder: (context, i, animation) {
         if (i.isOdd) {
-          return Divider();
+          return Divider(height: 1,);
         }
         var index = i ~/ 2;
         if (index < tasks.length) {
-          return TaskListItem(tasks[index]);
+          var task = tasks[index];
+          return TaskListItem(task, _selectTask, _deselectTask, _updateList, _updateGraph, task.isSelected, key: ObjectKey(task));
         }
-      },
+      }
     );
+  }
+
+  _selectTask(Task task) {
+    _taskBloc.selectTasks([task]);
+  }
+
+  _deselectTask(Task task) {
+    _taskBloc.deselectTasks([task]);
+  }
+
+  _updateList() {
+    _taskBloc.refreshAll();
+  }
+
+  _updateGraph() {
+    _taskBloc.refreshGraph();
   }
 }

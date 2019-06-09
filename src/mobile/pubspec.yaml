@@ -19,4 +19,20 @@ dev_dependencies:
   mockito: any
 
 flutter:
+  
   uses-material-design: true
+
+  fonts:
+    - family: SourceSerifPro
+      fonts:
+        - asset: fonts/SourceSerifPro-Regular.ttf
+        - asset: fonts/SourceSerifPro-Semibold.ttf
+          weight: 600
+        - asset: fonts/SourceSerifPro-Bold.ttf
+          weight: 800
+
+    - family: NotoSerif
+      fonts:
+        - asset: fonts/NotoSerif-Regular.ttf
+        - asset: fonts/NotoSerif-Bold.ttf
+          weight: 800

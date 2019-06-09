@@ -5,57 +5,56 @@ import 'package:youni/util/datetime_helper.dart';
 void main() {
   test('Task is due in future', () {
     // Arrange
-    var task = Task(20, DateTime.now().add(Duration(days: 10)));
+    var task = Task('Task', 20, DateTime.now().add(Duration(days: 10)));
 
     // Act
     // Assert
     assert(!task.isOverdue());
     assert(!task.isDueLaterToday());
-    assert(task.daysTillDue() == 10);
+    assert(task.datesTillDue() == 10);
   });
 
   test('Task is due today', () {
     // Arrange
-    var task = Task(20, DateTimeHelper.eleven59Today());
+    var task = Task('Task', 20, DateTimeHelper.eleven59Today());
 
     // Act
     // Assert
     assert(!task.isOverdue());
     assert(task.isDueLaterToday());
-    assert(task.daysTillDue() == 0);
+    assert(task.datesTillDue() == 0);
   });
 
   test('Task is due tomorrow', () {
     // Arrange
-    var task = Task(20, DateTimeHelper.oneSecondPastMidnight());
+    var task = Task('Task', 20, DateTimeHelper.oneSecondPastMidnight());
 
     // Act
     // Assert
     assert(!task.isOverdue());
     assert(!task.isDueLaterToday());
-    assert(task.daysTillDue() == 1);
+    assert(task.datesTillDue() == 1);
   });
 
   test('Task is overdue today', () {
     // Arrange
-    var task = Task(20, DateTime.now());
+    var task = Task('Task', 20, DateTime.now());
 
     // Act
     // Assert
     assert(task.isOverdue());
     assert(!task.isDueLaterToday());
-    assert(task.daysTillDue() == 0);
+    assert(task.datesTillDue() == 0);
   });
 
   test('Task was due yesterday', () {
     // Arrange
-    var task = Task(20, DateTime.now().subtract(Duration(days: 1)));
+    var task = Task('Task', 20, DateTime.now().subtract(Duration(days: 1)));
 
     // Act
     // Assert
     assert(task.isOverdue());
-    assert(!task.isDueLaterToday());
-    assert(task.daysTillDue() == 0);
+    assert(task.datesTillDue() == -1);
   });
 
   test('Asking for day weight outside of due date throws error', () {
@@ -63,7 +62,7 @@ void main() {
     var now = DateTime.now();
     var dueDate = DateTimeHelper.oneWeekFromNow();
     var daysTillDue = dueDate.difference(now).inDays;
-    var task = Task(14, dueDate);
+    var task = Task('Task', 14, dueDate);
 
     // Act
     // Assert
@@ -72,7 +71,7 @@ void main() {
 
   test('Task has correct day weight start', () {
     // Arrange
-    var task = Task(14, DateTimeHelper.oneWeekFromNow());
+    var task = Task('Task', 14, DateTimeHelper.oneWeekFromNow());
 
     // Act
     var weight = task.dayWeight(0);
@@ -83,7 +82,7 @@ void main() {
 
   test('Task has correct day weight middle', () {
     // Arrange
-    var task = Task(14, DateTimeHelper.oneWeekFromNow());
+    var task = Task('Task', 14, DateTimeHelper.oneWeekFromNow());
 
     // Act
     var weight = task.dayWeight(3);
@@ -94,7 +93,7 @@ void main() {
 
   test('Task has correct day weight end', () {
     // Arrange
-    var task = Task(14, DateTimeHelper.oneWeekFromNow());
+    var task = Task('Task', 14, DateTimeHelper.oneWeekFromNow());
 
     // Act
     var weight = task.dayWeight(7);
@@ -105,7 +104,7 @@ void main() {
 
   test('Task due today has correct day weight', () {
     // Arrange
-    var task = Task(14, DateTimeHelper.eleven59Today());
+    var task = Task('Task', 14, DateTimeHelper.eleven59Today());
 
     // Act
     var weight = task.dayWeight(0);
@@ -114,9 +113,9 @@ void main() {
     assert(14 == weight);
   });
 
-  test('Task due today has correct day weights', () {
+  test('Task due in one week has correct day weights', () {
     // Arrange
-    var task = Task(14, DateTimeHelper.oneWeekFromNow());
+    var task = Task('Task', 14, DateTimeHelper.oneWeekFromNow());
 
     // Act
     var weights = task.dayWeights();

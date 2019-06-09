@@ -1,8 +1,22 @@
 class DateTimeHelper {
 
+  static DateTime middayOf(DateTime date) {
+    return DateTime(date.year, date.month, date.day, 12, 00, 00, 00, 000);
+  }
+
   static DateTime middayToday() {
     var now = DateTime.now();
     return DateTime(now.year, now.month, now.day, 12, 00, 00, 00, 000);
+  }
+  
+  static DateTime middayTomorrow() {
+    var tomorrow = DateTime.now().add((Duration(days: 1)));
+    return DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 12, 00, 00, 00, 000);
+  }
+
+  static DateTime middayDayAfterTomorrow() {
+    var tomorrow = DateTime.now().add((Duration(days: 2)));
+    return DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 12, 00, 00, 00, 000);
   }
 
   static DateTime eleven59Today() {
